@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National AI Risk Intelligence Framework</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-bg: #0a0e27;
+            --darker-bg: #050609;
+            --card-bg: rgba(15, 23, 42, 0.95);
+            --card-border: rgba(148, 163, 184, 0.25);
+            --text-primary: #f0f4f8;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --accent-blue: #3b82f6;
+            --accent-blue-light: #60a5fa;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-orange: #f97316;
+            --accent-pink: #ec4899;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, #0f1729 50%, #0a0e27 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-top: 40px;
+        }
+
+        /* ========== HEADER SECTION ========== */
+        .header-container {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(25, 35, 65, 0.95) 100%);
+            border-bottom: 2px solid rgba(96, 165, 250, 0.3);
+            padding: 60px 40px;
+            margin-bottom: 50px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.5), transparent);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .main-title {
+            font-size: clamp(48px, 5vw, 72px);
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #60a5fa 0%, #8b5cf6 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: clamp(18px, 2vw, 24px);
+            color: var(--text-secondary);
+            font-weight: 500;
+            line-height: 1.6;
+            max-width: 900px;
+            margin-bottom: 10px;
+        }
+
+        .prepared-by {
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(148, 163, 184, 0.2);
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .prepared-by strong {
+            color: var(--accent-blue-light);
+        }
+
+        .prepared-by .prepared-date {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        /* ========== ORG TYPE SECTION ========== */
+        .org-type-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px 80px;
+        }
+
+        .section-header {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 5px;
+            height: 40px;
+            background: linear-gradient(180deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            border-radius: 3px;
+        }
+
+        .section-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .org-type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .org-card {
+            padding: 28px 24px;
+            border: 2px solid var(--card-border);
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(25, 35, 65, 0.8) 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+        }
+
+        .org-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.1), transparent);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .org-card:hover {
+            border-color: var(--accent-blue-light);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(25, 35, 65, 0.95) 100%);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(96, 165, 250, 0.2);
+        }
+
+        .org-card.selected {
+            border-color: var(--accent-blue);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+            box-shadow: 0 0 30px rgba(96, 165, 250, 0.3), inset 0 0 20px rgba(96, 165, 250, 0.1);
+        }
+
+        .org-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            background: var(--accent-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .org-icon {
+            font-size: 48px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .org-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== QUESTIONS SECTION ========== */
+        .questions-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px 80px;
+        }
+
+        .question-block {
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(25, 35, 65, 0.9) 100%);
+            border: 1px solid var(--card-border);
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 16px;
+            padding: 36px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .question-block:hover {
+            border-left-color: var(--accent-purple);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .question-block.healthcare {
+            border-left-color: #ef4444;
+        }
+
+        .question-block.financial {
+            border-left-color: #8b5cf6;
+        }
+
+        .question-block.government {
+            border-left-color: #06b6d4;
+        }
+
+        .question-block.education {
+            border-left-color: #10b981;
+        }
+
+        .question-block.research {
+            border-left-color: #f59e0b;
+        }
+
+        .question-block.private {
+            border-left-color: #ec4899;
+        }
+
+        .question-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--accent-blue);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .question-context {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            font-style: italic;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        select,
+        textarea {
+            padding: 14px 16px;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            background: rgba(8, 17, 31, 0.8);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+            background: rgba(8, 17, 31, 0.95);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-size: 14px;
+        }
+
+        .radio-group,
+        .checkbox-group {
+            display: grid;
+            gap: 12px;
+        }
+
+        .radio-option,
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            background: rgba(8, 17, 31, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .radio-option:hover,
+        .checkbox-option:hover {
+            border-color: var(--accent-blue);
+            background: rgba(8, 17, 31, 0.8);
+        }
+
+        input[type="radio"],
+        input[type="checkbox"] {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+        }
+
+        .option-label {
+            font-size: 16px;
+            color: var(--text-primary);
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(96, 165, 250, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(96, 165, 250, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-blue);
+            border: 2px solid var(--accent-blue);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(96, 165, 250, 0.1);
+        }
+
+        .success-message {
+            padding: 16px 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            border-radius: 10px;
+            color: #86efac;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .footer-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            text-align: center;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 40px 20px;
+            }
+
+            .main-title {
+                font-size: 36px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .org-type-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 12px;
+            }
+
+            .org-card {
+                padding: 20px 16px;
+            }
+
+            .org-icon {
+                font-size: 36px;
+            }
+
+            .org-label {
+                font-size: 14px;
+            }
+
+            .question-block {
+                padding: 24px;
+            }
+
+            .question-text {
+                font-size: 18px;
+            }
+
+            .input-group {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .org-type-section,
+            .questions-section {
+                padding: 0 20px 60px;
+            }
+        }
+
+        /* ========== HIDDEN QUESTIONS ========== */
+        .question-block {
+            display: none;
+        }
+
+        .question-block.show {
+            display: block;
+        }
+
+        .org-type-section.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<div class="header-container">
+    <div class="header-content">
+        <h1 class="main-title">National AI Risk Intelligence Framework</h1>
+        <p class="subtitle">Monitor AI adoption, Shadow AI exposure, cybersecurity risks, governance challenges, and organizational AI threat trends across critical sectors.</p>
+        <div class="prepared-by">
+            <strong>Prepared By:</strong> Audrey Rah<br>
+            <strong>University of Houston</strong>
+            <div class="prepared-date">Date: June 18, 2026</div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== ORGANIZATION TYPE SELECTION ========== -->
+<div class="org-type-section">
+    <div class="section-header">
+        <h2 class="section-title">Select Your Organization Type</h2>
+        <p class="section-description">Choose the type of organization you represent to receive targeted AI risk assessment questions.</p>
+    </div>
+
+    <div class="org-type-grid" id="orgTypeGrid">
+        <div class="org-card" onclick="selectOrgType('healthcare')" data-org="healthcare">
+            <div class="org-icon">🏥</div>
+            <div class="org-label">Hospitals / Healthcare</div>
+        </div>
+
+        <div class="org-card" onclick="selectOrgType('financial')" data-org="financial">
+            <div class="org-icon">🏦</div>
+            <div class="org-label">Banks / Financial</div>
+        </div>
+
+        <div class="org-card" onclick="selectOrgType('government')" data-org="government">
+            <div class="org-icon">🏛️</div>
+            <div class="org-label">Government</div>
+        </div>
+
+        <div class="org-card" onclick="selectOrgType('education')" data-org="education">
+            <div class="org-icon">🎓</div>
+            <div class="org-label">Education / Universities</div>
+        </div>
+
+        <div class="org-card" onclick="selectOrgType('research')" data-org="research">
+            <div class="org-icon">🔬</div>
+            <div class="org-label">Research</div>
+        </div>
+
+        <div class="org-card" onclick="selectOrgType('private')" data-org="private">
+            <div class="org-icon">💼</div>
+            <div class="org-label">Private Companies</div>
+        </div>
+
+        <div class="org-card" onclick="selectOrgType('other')" data-org="other">
+            <div class="org-icon">⭐</div>
+            <div class="org-label">Other</div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== QUESTIONS SECTION ========== -->
+<div class="questions-section" id="questionsSection" style="display: none;">
+    <div class="success-message" id="successMessage">✓ Your responses have been saved successfully.</div>
+
+    <!-- HEALTHCARE QUESTIONS -->
+    <div class="question-block healthcare show" id="q1">
+        <div class="question-number">1</div>
+        <h3 class="question-text">Organization Information</h3>
+        <p class="question-context">Help us understand your organization better</p>
+        <div class="input-group">
+            <div class="input-field">
+                <label class="input-label">Hospital / Healthcare System Name</label>
+                <input type="text" placeholder="e.g., City Medical Center" data-field="q1_name">
+            </div>
+            <div class="input-field">
+                <label class="input-label">Number of Beds / Facilities</label>
+                <input type="number" placeholder="e.g., 500" data-field="q1_beds">
+            </div>
+            <div class="input-field">
+                <label class="input-label">Your Title / Department</label>
+                <input type="text" placeholder="e.g., Chief Information Security Officer" data-field="q1_title">
+            </div>
+        </div>
+    </div>
+
+    <div class="question-block healthcare show" id="q2">
+        <div class="question-number">2</div>
+        <h3 class="question-text">AI Tools Currently Used</h3>
+        <p class="question-context">Which AI tools is your healthcare organization currently using?</p>
+        <div class="checkbox-group">
+            <label class="checkbox-option">
+                <input type="checkbox" value="ChatGPT" data-field="q2_ai">
+                <span class="option-label">ChatGPT / OpenAI (clinical notes, admin work)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Claude" data-field="q2_ai">
+                <span class="option-label">Claude / Anthropic (medical documentation)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Google AI" data-field="q2_ai">
+                <span class="option-label">Google AI / Vertex AI (diagnostic analysis)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="IBM Watson" data-field="q2_ai">
+                <span class="option-label">IBM Watson (health analytics)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Custom AI" data-field="q2_ai">
+                <span class="option-label">Custom/Proprietary AI Systems</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Other" data-field="q2_ai">
+                <span class="option-label">Other (please specify below)</span>
+            </label>
+        </div>
+        <div class="input-field" style="margin-top: 16px;">
+            <label class="input-label">Other AI Tools (if applicable)</label>
+            <textarea placeholder="List any other AI tools..." data-field="q2_other"></textarea>
+        </div>
+    </div>
+
+    <div class="question-block healthcare show" id="q3">
+        <div class="question-number">3</div>
+        <h3 class="question-text">Critical AI-Related Risks</h3>
+        <p class="question-context">Which risks are most concerning for your organization?</p>
+        <div class="checkbox-group">
+            <label class="checkbox-option">
+                <input type="checkbox" value="Patient Data Breach" data-field="q3_risk">
+                <span class="option-label">Patient Data Breach via AI Tools (PHI/PII)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Diagnostic Errors" data-field="q3_risk">
+                <span class="option-label">AI-Generated Diagnostic Errors</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="HIPAA Non-Compliance" data-field="q3_risk">
+                <span class="option-label">HIPAA Compliance Violations</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Shadow AI" data-field="q3_risk">
+                <span class="option-label">Shadow AI (unauthorized tools by staff)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Ransomware" data-field="q3_risk">
+                <span class="option-label">Ransomware Targeting AI Systems</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Model Poisoning" data-field="q3_risk">
+                <span class="option-label">AI Model Poisoning / Adversarial Attacks</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="question-block healthcare show" id="q4">
+        <div class="question-number">4</div>
+        <h3 class="question-text">Current Security Controls</h3>
+        <p class="question-context">What AI and enterprise security controls do you currently have in place?</p>
+        <div class="checkbox-group">
+            <label class="checkbox-option">
+                <input type="checkbox" value="AI Governance Framework" data-field="q4_controls">
+                <span class="option-label">AI Governance Framework / Policy</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="AI Security Tool" data-field="q4_controls">
+                <span class="option-label">AI Security/Safety Tool (Lakera, Protect AI, etc.)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="EDR" data-field="q4_controls">
+                <span class="option-label">Endpoint Detection & Response (EDR)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="SIEM" data-field="q4_controls">
+                <span class="option-label">Security Information Event Management (SIEM)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="DLP" data-field="q4_controls">
+                <span class="option-label">Data Loss Prevention (DLP)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="None" data-field="q4_controls">
+                <span class="option-label">None of the above</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="question-block healthcare show" id="q5">
+        <div class="question-number">5</div>
+        <h3 class="question-text">Recent AI Security Incidents or Concerns</h3>
+        <p class="question-context">Have you experienced any security issues related to AI tools?</p>
+        <div class="radio-group">
+            <label class="radio-option">
+                <input type="radio" name="q5_incidents" value="yes" data-field="q5_incidents">
+                <span class="option-label">Yes, we've had incidents (data breaches, unauthorized access, etc.)</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="q5_incidents" value="close-call" data-field="q5_incidents">
+                <span class="option-label">Close calls - We've caught near-misses</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="q5_incidents" value="no" data-field="q5_incidents">
+                <span class="option-label">No incidents that we're aware of</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="q5_incidents" value="unknown" data-field="q5_incidents">
+                <span class="option-label">Unsure - We don't have full visibility</span>
+            </label>
+        </div>
+        <div class="input-field" style="margin-top: 16px;">
+            <label class="input-label">Details (if applicable)</label>
+            <textarea placeholder="Brief description of incidents or concerns..." data-field="q5_details"></textarea>
+        </div>
+    </div>
+
+    <div class="question-block healthcare show" id="q6">
+        <div class="question-number">6</div>
+        <h3 class="question-text">What is Your Primary Need?</h3>
+        <p class="question-context">What would help your organization most right now?</p>
+        <div class="radio-group">
+            <label class="radio-option">
+                <input type="radio" name="q6_need" value="visibility" data-field="q6_need">
+                <span class="option-label">Visibility - Know what AI tools we're using (Shadow AI detection)</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="q6_need" value="risk-assessment" data-field="q6_need">
+                <span class="option-label">Risk Assessment - Understand vulnerabilities in our AI tools</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="q6_need" value="compliance" data-field="q6_need">
+                <span class="option-label">Compliance - Document controls for HIPAA audits</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="q6_need" value="incident-response" data-field="q6_need">
+                <span class="option-label">Incident Response - Better tools to detect/respond to AI threats</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="q6_need" value="all-of-above" data-field="q6_need">
+                <span class="option-label">All of the above</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- FINANCIAL QUESTIONS -->
+    <div class="question-block financial" id="f1">
+        <div class="question-number">1</div>
+        <h3 class="question-text">Organization Information</h3>
+        <p class="question-context">Help us understand your financial institution</p>
+        <div class="input-group">
+            <div class="input-field">
+                <label class="input-label">Bank / Financial Institution Name</label>
+                <input type="text" placeholder="e.g., Global Financial Services Corp" data-field="f1_name">
+            </div>
+            <div class="input-field">
+                <label class="input-label">Assets Under Management (AUM)</label>
+                <input type="text" placeholder="e.g., $50 Billion" data-field="f1_aum">
+            </div>
+            <div class="input-field">
+                <label class="input-label">Your Title / Department</label>
+                <input type="text" placeholder="e.g., Chief Risk Officer" data-field="f1_title">
+            </div>
+        </div>
+    </div>
+
+    <div class="question-block financial" id="f2">
+        <div class="question-number">2</div>
+        <h3 class="question-text">AI Tools in Use</h3>
+        <p class="question-context">Which AI tools does your financial organization use?</p>
+        <div class="checkbox-group">
+            <label class="checkbox-option">
+                <input type="checkbox" value="ChatGPT" data-field="f2_ai">
+                <span class="option-label">ChatGPT (trading analysis, customer support)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Claude" data-field="f2_ai">
+                <span class="option-label">Claude (financial documents, risk analysis)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Proprietary Trading AI" data-field="f2_ai">
+                <span class="option-label">Proprietary Trading/Algorithmic AI</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Fraud Detection AI" data-field="f2_ai">
+                <span class="option-label">AI Fraud Detection Systems</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Regulatory Compliance AI" data-field="f2_ai">
+                <span class="option-label">Regulatory Compliance AI</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Other" data-field="f2_ai">
+                <span class="option-label">Other (please specify)</span>
+            </label>
+        </div>
+        <div class="input-field" style="margin-top: 16px;">
+            <label class="input-label">Other AI Systems</label>
+            <textarea placeholder="Describe any other AI tools..." data-field="f2_other"></textarea>
+        </div>
+    </div>
+
+    <div class="question-block financial" id="f3">
+        <div class="question-number">3</div>
+        <h3 class="question-text">Regulatory & Compliance Pressures</h3>
+        <p class="question-context">Which regulations affect your AI risk assessment?</p>
+        <div class="checkbox-group">
+            <label class="checkbox-option">
+                <input type="checkbox" value="SEC AI Rules" data-field="f3_regs">
+                <span class="option-label">SEC AI Disclosure Rules</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="EU AI Act" data-field="f3_regs">
+                <span class="option-label">EU AI Act (if applicable)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="FDIC Guidance" data-field="f3_regs">
+                <span class="option-label">FDIC AI Risk Guidance</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Fair Lending" data-field="f3_regs">
+                <span class="option-label">Fair Lending / Anti-Discrimination Laws</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="SOX" data-field="f3_regs">
+                <span class="option-label">SOX / Internal Controls</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="None Specified" data-field="f3_regs">
+                <span class="option-label">Not sure / Multiple changing regulations</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="question-block financial" id="f4">
+        <div class="question-number">4</div>
+        <h3 class="question-text">Top AI Risk Concerns</h3>
+        <p class="question-context">What concerns you most about AI security in financial services?</p>
+        <div class="checkbox-group">
+            <label class="checkbox-option">
+                <input type="checkbox" value="Model Risk" data-field="f4_risks">
+                <span class="option-label">Model Risk / Trading Errors from Bad Algorithms</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Data Theft" data-field="f4_risks">
+                <span class="option-label">Customer Data Theft / Breach</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Regulatory Breach" data-field="f4_risks">
+                <span class="option-label">Regulatory Non-Compliance via AI</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Insider Threats" data-field="f4_risks">
+                <span class="option-label">Insider Threats Using AI Tools</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Shadow AI" data-field="f4_risks">
+                <span class="option-label">Shadow AI (Unauthorized AI tools by employees)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Supply Chain" data-field="f4_risks">
+                <span class="option-label">AI Supply Chain Vulnerabilities</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="question-block financial" id="f5">
+        <div class="question-number">5</div>
+        <h3 class="question-text">Current AI Risk Management</h3>
+        <p class="question-context">What AI governance and controls do you have?</p>
+        <div class="radio-group">
+            <label class="radio-option">
+                <input type="radio" name="f5_management" value="comprehensive" data-field="f5_management">
+                <span class="option-label">Comprehensive - AI Governance Board, Risk Framework, Monitoring</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="f5_management" value="developing" data-field="f5_management">
+                <span class="option-label">Developing - We're building our AI risk program</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="f5_management" value="basic" data-field="f5_management">
+                <span class="option-label">Basic - Ad-hoc controls, no formal framework</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="f5_management" value="minimal" data-field="f5_management">
+                <span class="option-label">Minimal - Limited visibility into AI risk</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="question-block financial" id="f6">
+        <div class="question-number">6</div>
+        <h3 class="question-text">Primary Pain Point</h3>
+        <p class="question-context">What's keeping your leadership up at night regarding AI?</p>
+        <div class="input-field">
+            <label class="input-label">Describe your biggest concern</label>
+            <textarea placeholder="e.g., We don't know which teams are using which AI tools, trading algorithm blew up once with bad data..." data-field="f6_concern"></textarea>
+        </div>
+    </div>
+
+    <!-- GOVERNMENT QUESTIONS -->
+    <div class="question-block government" id="g1">
+        <div class="question-number">1</div>
+        <h3 class="question-text">Organization Information</h3>
+        <p class="question-context">Tell us about your government agency</p>
+        <div class="input-group">
+            <div class="input-field">
+                <label class="input-label">Agency Name</label>
+                <input type="text" placeholder="e.g., Department of Defense" data-field="g1_name">
+            </div>
+            <div class="input-field">
+                <label class="input-label">Department / Division</label>
+                <input type="text" placeholder="e.g., Cybersecurity Division" data-field="g1_dept">
+            </div>
+            <div class="input-field">
+                <label class="input-label">Your Title</label>
+                <input type="text" placeholder="e.g., Chief Information Security Officer" data-field="g1_title">
+            </div>
+        </div>
+    </div>
+
+    <div class="question-block government" id="g2">
+        <div class="question-number">2</div>
+        <h3 class="question-text">AI Adoption in Your Agency</h3>
+        <p class="question-context">How is your agency using AI?</p>
+        <div class="checkbox-group">
+            <label class="checkbox-option">
+                <input type="checkbox" value="Internal Operations" data-field="g2_adoption">
+                <span class="option-label">Internal Operations (administrative, analysis)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Public Services" data-field="g2_adoption">
+                <span class="option-label">Public Services (citizens, benefits, etc.)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Intelligence/Defense" data-field="g2_adoption">
+                <span class="option-label">Intelligence / Defense / Law Enforcement</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Research" data-field="g2_adoption">
+                <span class="option-label">Scientific Research & Analysis</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Policy Making" data-field="g2_adoption">
+                <span class="option-label">Policy Making / Predictive Analytics</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Not Using" data-field="g2_adoption">
+                <span class="option-label">Not actively using AI yet</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="question-block government" id="g3">
+        <div class="question-number">3</div>
+        <h3 class="question-text">Critical Security Mandates</h3>
+        <p class="question-context">What government-specific security requirements apply?</p>
+        <div class="checkbox-group">
+            <label class="checkbox-option">
+                <input type="checkbox" value="NIST CSF" data-field="g3_mandates">
+                <span class="option-label">NIST Cybersecurity Framework (CSF)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="EO 14028" data-field="g3_mandates">
+                <span class="option-label">Executive Order 14028 (Improving Cybersecurity)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="OMB Memoranda" data-field="g3_mandates">
+                <span class="option-label">OMB AI Memoranda & Guidance</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Classification Handling" data-field="g3_mandates">
+                <span class="option-label">Classified Information Security (CUI, TS/SCI)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="FISMA" data-field="g3_mandates">
+                <span class="option-label">FISMA Compliance</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Agency-Specific" data-field="g3_mandates">
+                <span class="option-label">Agency-Specific Policies</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="question-block government" id="g4">
+        <div class="question-number">4</div>
+        <h3 class="question-text">Top AI Threat Concerns</h3>
+        <p class="question-context">What AI-related threats worry you most?</p>
+        <div class="checkbox-group">
+            <label class="checkbox-option">
+                <input type="checkbox" value="Data Compromise" data-field="g4_threats">
+                <span class="option-label">Data Compromise (classified/sensitive)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Foreign AI Tools" data-field="g4_threats">
+                <span class="option-label">Foreign AI Tools / Platforms (espionage risk)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Shadow AI" data-field="g4_threats">
+                <span class="option-label">Shadow AI (uncontrolled AI use)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Supply Chain" data-field="g4_threats">
+                <span class="option-label">AI Supply Chain Vulnerabilities</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Adversarial Attacks" data-field="g4_threats">
+                <span class="option-label">Adversarial Attacks on AI Systems</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Insider Threats" data-field="g4_threats">
+                <span class="option-label">Insider Threats Using AI</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="question-block government" id="g5">
+        <div class="question-number">5</div>
+        <h3 class="question-text">Current AI Risk Visibility</h3>
+        <p class="question-context">How well can you track AI security risks across your agency?</p>
+        <div class="radio-group">
+            <label class="radio-option">
+                <input type="radio" name="g5_visibility" value="full" data-field="g5_visibility">
+                <span class="option-label">Full Visibility - We know all AI systems and their vulnerabilities</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="g5_visibility" value="partial" data-field="g5_visibility">
+                <span class="option-label">Partial Visibility - We track major systems but gaps exist</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="g5_visibility" value="limited" data-field="g5_visibility">
+                <span class="option-label">Limited Visibility - We're just starting to track AI</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="g5_visibility" value="none" data-field="g5_visibility">
+                <span class="option-label">No Visibility - Urgent need for AI security framework</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="question-block government" id="g6">
+        <div class="question-number">6</div>
+        <h3 class="question-text">Key Challenge for Your Agency</h3>
+        <p class="question-context">What's your biggest challenge in managing AI security?</p>
+        <div class="input-field">
+            <label class="input-label">Describe the challenge</label>
+            <textarea placeholder="e.g., Different offices use different AI tools, no central oversight..." data-field="g6_challenge"></textarea>
+        </div>
+    </div>
+
+    <!-- EDUCATION QUESTIONS -->
+    <div class="question-block education" id="e1">
+        <div class="question-number">—</div>
+        <h3 class="question-text">Organization Information</h3>
+        <p class="question-context">Education / Universities — University of Houston</p>
+        <div class="input-group">
+            <div class="input-field">
+                <label class="input-label">University / Education Institution Name</label>
+                <input type="text" placeholder="University of Houston" data-field="e1_name">
+            </div>
+            <div class="input-field">
+                <label class="input-label">Prepared By</label>
+                <input type="text" placeholder="Audrey Rah" data-field="e1_prepared">
+            </div>
+            <div class="input-field">
+                <label class="input-label">Organization Type</label>
+                <input type="text" placeholder="Education / Universities" data-field="e1_type">
+            </div>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e2">
+        <div class="question-number">1</div>
+        <h3 class="question-text">Do you need visibility into AI-specific security threats across your organization?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q1" value="Critical Need" data-field="exec_q1"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q1" value="Important" data-field="exec_q1"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q1" value="Nice to Have" data-field="exec_q1"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q1" value="Not Needed" data-field="exec_q1"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e3">
+        <div class="question-number">2</div>
+        <h3 class="question-text">Do you need to monitor only the AI technologies currently used within your organization?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q2" value="Critical Need" data-field="exec_q2"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q2" value="Important" data-field="exec_q2"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q2" value="Nice to Have" data-field="exec_q2"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q2" value="Not Needed" data-field="exec_q2"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e4">
+        <div class="question-number">3</div>
+        <h3 class="question-text">Do you need real-time alerts for newly discovered AI security vulnerabilities?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q3" value="Critical Need" data-field="exec_q3"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q3" value="Important" data-field="exec_q3"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q3" value="Nice to Have" data-field="exec_q3"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q3" value="Not Needed" data-field="exec_q3"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e5">
+        <div class="question-number">4</div>
+        <h3 class="question-text">Do you require vulnerability intelligence directly from trusted government sources such as NIST and CISA?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q4" value="Critical Need" data-field="exec_q4"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q4" value="Important" data-field="exec_q4"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q4" value="Nice to Have" data-field="exec_q4"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q4" value="Not Needed" data-field="exec_q4"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e6">
+        <div class="question-number">5</div>
+        <h3 class="question-text">Do you need a simple executive dashboard to communicate AI security risks to leadership and decision-makers?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q5" value="Critical Need" data-field="exec_q5"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q5" value="Important" data-field="exec_q5"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q5" value="Nice to Have" data-field="exec_q5"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q5" value="Not Needed" data-field="exec_q5"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e7">
+        <div class="question-number">6</div>
+        <h3 class="question-text">Do you need recommended mitigation actions for identified AI security threats?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q6" value="Critical Need" data-field="exec_q6"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q6" value="Important" data-field="exec_q6"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q6" value="Nice to Have" data-field="exec_q6"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q6" value="Not Needed" data-field="exec_q6"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e8">
+        <div class="question-number">7</div>
+        <h3 class="question-text">Do you need vulnerabilities automatically prioritized by severity level?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q7" value="Critical Need" data-field="exec_q7"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q7" value="Important" data-field="exec_q7"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q7" value="Nice to Have" data-field="exec_q7"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q7" value="Not Needed" data-field="exec_q7"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e9">
+        <div class="question-number">8</div>
+        <h3 class="question-text">Do you need a single centralized dashboard instead of reviewing multiple threat intelligence sources?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q8" value="Critical Need" data-field="exec_q8"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q8" value="Important" data-field="exec_q8"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q8" value="Nice to Have" data-field="exec_q8"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q8" value="Not Needed" data-field="exec_q8"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e10">
+        <div class="question-number">9</div>
+        <h3 class="question-text">Do you need to document AI-related security controls for audit and compliance purposes?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q9" value="Critical Need" data-field="exec_q9"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q9" value="Important" data-field="exec_q9"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q9" value="Nice to Have" data-field="exec_q9"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q9" value="Not Needed" data-field="exec_q9"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e11">
+        <div class="question-number">10</div>
+        <h3 class="question-text">Do you need visibility into compliance impacts such as HIPAA, PCI-DSS, SOC 2, FERPA, or NIST requirements?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q10" value="Critical Need" data-field="exec_q10"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q10" value="Important" data-field="exec_q10"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q10" value="Nice to Have" data-field="exec_q10"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q10" value="Not Needed" data-field="exec_q10"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e12">
+        <div class="question-number">11</div>
+        <h3 class="question-text">Do you need automated report generation for executives, auditors, regulators, or stakeholders?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q11" value="Critical Need" data-field="exec_q11"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q11" value="Important" data-field="exec_q11"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q11" value="Nice to Have" data-field="exec_q11"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q11" value="Not Needed" data-field="exec_q11"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e13">
+        <div class="question-number">12</div>
+        <h3 class="question-text">Do you need visibility into security risks associated with ChatGPT and OpenAI technologies?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q12" value="Critical Need" data-field="exec_q12"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q12" value="Important" data-field="exec_q12"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q12" value="Nice to Have" data-field="exec_q12"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q12" value="Not Needed" data-field="exec_q12"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e14">
+        <div class="question-number">13</div>
+        <h3 class="question-text">Do you need visibility into security risks associated with Claude and Anthropic technologies?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q13" value="Critical Need" data-field="exec_q13"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q13" value="Important" data-field="exec_q13"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q13" value="Nice to Have" data-field="exec_q13"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q13" value="Not Needed" data-field="exec_q13"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e15">
+        <div class="question-number">14</div>
+        <h3 class="question-text">Do you need different dashboard views for executives, managers, and security analysts?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q14" value="Critical Need" data-field="exec_q14"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q14" value="Important" data-field="exec_q14"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q14" value="Nice to Have" data-field="exec_q14"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q14" value="Not Needed" data-field="exec_q14"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+    <div class="question-block education" id="e16">
+        <div class="question-number">15</div>
+        <h3 class="question-text">Do you need organization-specific threat context that explains why an AI risk matters to your environment?</h3>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="exec_q15" value="Critical Need" data-field="exec_q15"><span class="option-label">Critical Need</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q15" value="Important" data-field="exec_q15"><span class="option-label">Important</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q15" value="Nice to Have" data-field="exec_q15"><span class="option-label">Nice to Have</span></label>
+            <label class="radio-option"><input type="radio" name="exec_q15" value="Not Needed" data-field="exec_q15"><span class="option-label">Not Needed</span></label>
+        </div>
+    </div>
+
+
+    <!-- RESEARCH QUESTIONS -->
+    <div class="question-block research" id="r1">
+        <div class="question-number">1</div>
+        <h3 class="question-text">Organization Information</h3>
+        <p class="question-context">Tell us about your research organization</p>
+        <div class="input-group">
+            <div class="input-field">
+                <label class="input-label">Research Organization Name</label>
+                <input type="text" placeholder="e.g., National Research Lab" data-field="r1_name">
+            </div>
+            <div class="input-field">
+                <label class="input-label">Primary Research Domain</label>
+                <input type="text" placeholder="e.g., AI Safety, Quantum Computing, Biotech" data-field="r1_domain">
+            </div>
+            <div class="input-field">
+                <label class="input-label">Your Title</label>
+                <input type="text" placeholder="e.g., Director of Research Security" data-field="r1_title">
+            </div>
+        </div>
+    </div>
+
+    <div class="question-block research" id="r2">
+        <div class="question-number">2</div>
+        <h3 class="question-text">AI Systems Used in Research</h3>
+        <p class="question-context">What AI tools support your research?</p>
+        <div class="checkbox-group">
+            <label class="checkbox-option">
+                <input type="checkbox" value="GenAI" data-field="r2_ai">
+                <span class="option-label">Generative AI (GPT, Claude, etc.) - Research support</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="ML Models" data-field="r2_ai">
+                <span class="option-label">Machine Learning Models (custom/open source)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Scientific AI" data-field="r2_ai">
+                <span class="option-label">Scientific AI (drug discovery, simulation, etc.)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Data Analysis AI" data-field="r2_ai">
+                <span class="option-label">AI for Data Analysis & Visualization</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Infrastructure AI" data-field="r2_ai">
+                <span class="option-label">Infrastructure / Lab Equipment AI</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Other" data-field="r2_ai">
+                <span class="option-label">Other (please specify)</span>
+            </label>
+        </div>
+        <div class="input-field" style="margin-top: 16px;">
+            <label class="input-label">Other AI Systems</label>
+            <textarea placeholder="Describe..." data-field="r2_other"></textarea>
+        </div>
+    </div>
+
+    <div class="question-block research" id="r3">
+        <div class="question-number">3</div>
+        <h3 class="question-text">Research Security Requirements</h3>
+        <p class="question-context">What compliance/security standards apply?</p>
+        <div class="checkbox-group">
+            <label class="checkbox-option">
+                <input type="checkbox" value="NIST" data-field="r3_requirements">
+                <span class="option-label">NIST Standards / Frameworks</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Export Control" data-field="r3_requirements">
+                <span class="option-label">Export Control (EAR, ITAR)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="IP Protection" data-field="r3_requirements">
+                <span class="option-label">Intellectual Property Protection</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Data Privacy" data-field="r3_requirements">
+                <span class="option-label">Data Privacy (GDPR, CCPA, etc.)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Institutional Review" data-field="r3_requirements">
+                <span class="option-label">Institutional Review (IRB, ethics boards)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="None Specific" data-field="r3_requirements">
+                <span class="option-label">No specific compliance mandate</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="question-block research" id="r4">
+        <div class="question-number">4</div>
+        <h3 class="question-text">Critical Threats to Research</h3>
+        <p class="question-context">What threatens your research security?</p>
+        <div class="checkbox-group">
+            <label class="checkbox-option">
+                <input type="checkbox" value="Data Theft" data-field="r4_threats">
+                <span class="option-label">Research Data Theft / IP Loss</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Model Poisoning" data-field="r4_threats">
+                <span class="option-label">AI Model Poisoning / Backdoors</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Foreign Access" data-field="r4_threats">
+                <span class="option-label">Unauthorized Foreign Access</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Supply Chain" data-field="r4_threats">
+                <span class="option-label">AI Supply Chain Vulnerabilities</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Reproducibility" data-field="r4_threats">
+                <span class="option-label">Reproducibility / Verification of AI Results</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Insider Threats" data-field="r4_threats">
+                <span class="option-label">Insider Threats / Rogue Researchers</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="question-block research" id="r5">
+        <div class="question-number">5</div>
+        <h3 class="question-text">What's Your Biggest Research Security Gap?</h3>
+        <p class="question-context">Where do you need help most?</p>
+        <div class="input-field">
+            <label class="input-label">Describe your gap</label>
+            <textarea placeholder="e.g., We use cutting-edge AI models but have no visibility into their security pedigree..." data-field="r5_gap"></textarea>
+        </div>
+    </div>
+
+    <!-- PRIVATE COMPANIES QUESTIONS -->
+    <div class="question-block private" id="p1">
+        <div class="question-number">1</div>
+        <h3 class="question-text">Organization Information</h3>
+        <p class="question-context">Tell us about your company</p>
+        <div class="input-group">
+            <div class="input-field">
+                <label class="input-label">Company Name</label>
+                <input type="text" placeholder="e.g., TechCorp Inc" data-field="p1_name">
+            </div>
+            <div class="input-field">
+                <label class="input-label">Company Size</label>
+                <select data-field="p1_size">
+                    <option value="">Select company size</option>
+                    <option value="10-50">10-50 employees</option>
+                    <option value="51-200">51-200 employees</option>
+                    <option value="201-1000">201-1000 employees</option>
+                    <option value="1001+">1,001+ employees</option>
+                </select>
+            </div>
+            <div class="input-field">
+                <label class="input-label">Your Title</label>
+                <input type="text" placeholder="e.g., Chief Security Officer" data-field="p1_title">
+            </div>
+        </div>
+    </div>
+
+    <div class="question-block private" id="p2">
+        <div class="question-number">2</div>
+        <h3 class="question-text">AI Tools Your Company Uses</h3>
+        <p class="question-context">How is your company leveraging AI?</p>
+        <div class="checkbox-group">
+            <label class="checkbox-option">
+                <input type="checkbox" value="Customer Facing" data-field="p2_ai">
+                <span class="option-label">Customer-Facing AI (chatbots, recommendations)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Internal Tools" data-field="p2_ai">
+                <span class="option-label">Internal Tools (ChatGPT, Claude for productivity)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Product Features" data-field="p2_ai">
+                <span class="option-label">AI as Core Product Feature</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Analytics" data-field="p2_ai">
+                <span class="option-label">AI for Analytics / Business Intelligence</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Automation" data-field="p2_ai">
+                <span class="option-label">AI for Business Process Automation</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Pilot Phase" data-field="p2_ai">
+                <span class="option-label">Pilot / Experimental AI Projects</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="question-block private" id="p3">
+        <div class="question-number">3</div>
+        <h3 class="question-text">Business & Security Risks</h3>
+        <p class="question-context">What AI risks keep your leadership concerned?</p>
+        <div class="checkbox-group">
+            <label class="checkbox-option">
+                <input type="checkbox" value="Customer Trust" data-field="p3_risks">
+                <span class="option-label">Customer Trust / Brand Damage from AI Failure</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="IP Theft" data-field="p3_risks">
+                <span class="option-label">Intellectual Property / Trade Secret Theft</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Regulatory Fines" data-field="p3_risks">
+                <span class="option-label">Regulatory Fines & Legal Liability</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Shadow AI" data-field="p3_risks">
+                <span class="option-label">Shadow AI (uncontrolled employee use)</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Data Breach" data-field="p3_risks">
+                <span class="option-label">Customer/Employee Data Breach via AI</span>
+            </label>
+            <label class="checkbox-option">
+                <input type="checkbox" value="Vendor Risk" data-field="p3_risks">
+                <span class="option-label">Vendor AI Security Risk</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="question-block private" id="p4">
+        <div class="question-number">4</div>
+        <h3 class="question-text">Current AI Security Posture</h3>
+        <p class="question-context">How mature is your AI security program?</p>
+        <div class="radio-group">
+            <label class="radio-option">
+                <input type="radio" name="p4_posture" value="mature" data-field="p4_posture">
+                <span class="option-label">Mature - Formal AI security program with governance</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="p4_posture" value="developing" data-field="p4_posture">
+                <span class="option-label">Developing - Building AI security program now</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="p4_posture" value="basic" data-field="p4_posture">
+                <span class="option-label">Basic - Some controls, no formal framework</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="p4_posture" value="minimal" data-field="p4_posture">
+                <span class="option-label">Minimal - We're just starting to think about this</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="question-block private" id="p5">
+        <div class="question-number">5</div>
+        <h3 class="question-text">Most Pressing AI Challenge</h3>
+        <p class="question-context">What do you need help solving right now?</p>
+        <div class="input-field">
+            <label class="input-label">Describe your challenge</label>
+            <textarea placeholder="e.g., We need to know which AI tools employees are using without them asking..." data-field="p5_challenge"></textarea>
+        </div>
+    </div>
+
+    <!-- OTHER ORGANIZATIONS -->
+    <div class="question-block other" id="o1">
+        <div class="question-number">1</div>
+        <h3 class="question-text">Organization Information</h3>
+        <p class="question-context">Tell us about your organization</p>
+        <div class="input-group">
+            <div class="input-field">
+                <label class="input-label">Organization Name</label>
+                <input type="text" placeholder="Enter organization name" data-field="o1_name">
+            </div>
+            <div class="input-field">
+                <label class="input-label">Organization Type (Not Listed Above)</label>
+                <input type="text" placeholder="e.g., NGO, Startup, Media Company" data-field="o1_type">
+            </div>
+            <div class="input-field">
+                <label class="input-label">Your Title</label>
+                <input type="text" placeholder="Enter your title" data-field="o1_title">
+            </div>
+        </div>
+    </div>
+
+    <div class="question-block other" id="o2">
+        <div class="question-number">2</div>
+        <h3 class="question-text">AI Adoption</h3>
+        <p class="question-context">How is your organization using AI?</p>
+        <div class="input-field">
+            <label class="input-label">Describe your AI usage</label>
+            <textarea placeholder="Describe the AI tools and use cases..." data-field="o2_usage"></textarea>
+        </div>
+    </div>
+
+    <div class="question-block other" id="o3">
+        <div class="question-number">3</div>
+        <h3 class="question-text">Key Concerns</h3>
+        <p class="question-context">What are your main AI security concerns?</p>
+        <div class="input-field">
+            <label class="input-label">Describe your concerns</label>
+            <textarea placeholder="Describe your top concerns..." data-field="o3_concerns"></textarea>
+        </div>
+    </div>
+
+    <div class="question-block other" id="o4">
+        <div class="question-number">4</div>
+        <h3 class="question-text">What You Need</h3>
+        <p class="question-context">How can we help your organization?</p>
+        <div class="input-field">
+            <label class="input-label">Describe your primary need</label>
+            <textarea placeholder="What do you need help with..." data-field="o4_need"></textarea>
+        </div>
+    </div>
+
+    <!-- SUBMIT SECTION -->
+    <div class="question-block" id="submitSection">
+        <h3 class="question-text" style="margin-bottom: 20px;">Submit Your Assessment</h3>
+        <p class="question-context" style="margin-bottom: 20px;">Thank you for completing the National AI Risk Intelligence Framework assessment. Click below to submit your responses.</p>
+        <div class="button-group">
+            <button class="btn-primary" onclick="submitResponses()">Submit Assessment</button>
+            <button class="btn-secondary" onclick="resetForm()">Clear Responses</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========== FOOTER ========== -->
+<div class="footer-section">
+    <p class="footer-text">
+        National AI Risk Intelligence Framework © 2024 | Your responses help us understand organizational AI threat landscapes across critical sectors.
+    </p>
+</div>
+
+<script>
+    let selectedOrgType = null;
+
+    function selectOrgType(orgType) {
+        selectedOrgType = orgType;
+        
+        // Update card selection
+        document.querySelectorAll('.org-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        document.querySelector(`[data-org="${orgType}"]`).classList.add('selected');
+
+        // Show questions section
+        document.getElementById('questionsSection').style.display = 'block';
+        
+        // Hide all questions
+        document.querySelectorAll('.question-block').forEach(block => {
+            block.classList.remove('show');
+        });
+
+        // Show questions for selected org type
+        document.querySelectorAll(`.question-block.${orgType}`).forEach(block => {
+            block.classList.add('show');
+        });
+
+        // Show submit section
+        document.getElementById('submitSection').style.display = 'block';
+
+        // Scroll to questions
+        setTimeout(() => {
+            document.getElementById('questionsSection').scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+    }
+
+    function submitResponses() {
+        if (!selectedOrgType) {
+            alert('Please select an organization type');
+            return;
+        }
+
+        const responses = {
+            orgType: selectedOrgType,
+            timestamp: new Date().toISOString(),
+            answers: {}
+        };
+
+        // Collect all form data
+        document.querySelectorAll('[data-field]').forEach(field => {
+            if (field.type === 'checkbox' || field.type === 'radio') {
+                if (field.checked) {
+                    if (!responses.answers[field.dataset.field]) {
+                        responses.answers[field.dataset.field] = [];
+                    }
+                    responses.answers[field.dataset.field].push(field.value);
+                }
+            } else {
+                if (field.value.trim()) {
+                    responses.answers[field.dataset.field] = field.value;
+                }
+            }
+        });
+
+        // Save to localStorage
+        localStorage.setItem('aiRiskAssessment', JSON.stringify(responses));
+
+        // Show success message
+        const message = document.getElementById('successMessage');
+        message.classList.add('show');
+
+        // Log responses (in production, send to server)
+        console.log('Assessment Submitted:', responses);
+
+        // Hide after 3 seconds
+        setTimeout(() => {
+            message.classList.remove('show');
+        }, 3000);
+    }
+
+    function resetForm() {
+        if (confirm('Are you sure you want to clear all responses?')) {
+            document.querySelectorAll('input[type="text"], input[type="number"], input[type="email"], textarea, select').forEach(field => {
+                field.value = '';
+            });
+            document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(field => {
+                field.checked = false;
+            });
+        }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        selectOrgType('education');
+    });
+</script>
+
+</body>
+</html>
