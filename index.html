@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>National AI Risk Intelligence Framework</title>
     <script defer src="/_vercel/insights/script.js"></script>
+    <title>National AI Risk Intelligence Framework</title>
     <style>
         * {
             margin: 0;
@@ -450,6 +450,132 @@
             display: block;
         }
 
+        .save-indicator {
+            padding: 10px 16px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(96, 165, 250, 0.4);
+            border-radius: 8px;
+            color: var(--accent-blue-light);
+            margin-bottom: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .save-indicator.show {
+            display: block;
+        }
+
+        .auto-save-note {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .completion-banner {
+            padding: 16px 20px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--success);
+            border-radius: 10px;
+            color: #86efac;
+            margin-bottom: 20px;
+            font-size: 15px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .completion-banner.show {
+            display: block;
+        }
+
+        @media print {
+            body {
+                background: #fff !important;
+                color: #000 !important;
+                padding: 0 !important;
+            }
+
+            .no-print,
+            .org-type-section,
+            .footer-section,
+            .button-group,
+            .save-indicator,
+            .auto-save-note {
+                display: none !important;
+            }
+
+            .header-container {
+                background: #fff !important;
+                border-bottom: 2px solid #333 !important;
+                box-shadow: none !important;
+                padding: 24px 0 !important;
+                margin-bottom: 24px !important;
+            }
+
+            .main-title {
+                -webkit-text-fill-color: #1e3a8a !important;
+                color: #1e3a8a !important;
+                font-size: 32px !important;
+            }
+
+            .subtitle,
+            .prepared-by,
+            .question-context,
+            .option-label {
+                color: #333 !important;
+            }
+
+            .questions-section,
+            .question-block {
+                display: block !important;
+                opacity: 1 !important;
+                page-break-inside: avoid;
+            }
+
+            .question-block {
+                background: #fff !important;
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+                margin-bottom: 16px !important;
+                padding: 16px !important;
+            }
+
+            input[type="radio"]:not(:checked),
+            input[type="checkbox"]:not(:checked) {
+                display: none !important;
+            }
+
+            input[type="radio"]:checked + .option-label,
+            input[type="checkbox"]:checked + .option-label {
+                font-weight: 700;
+                color: #000 !important;
+            }
+
+            input[type="radio"]:checked + .option-label::before,
+            input[type="checkbox"]:checked + .option-label::before {
+                content: "✓ ";
+            }
+
+            input[type="text"],
+            input[type="number"],
+            textarea {
+                border: none !important;
+                background: transparent !important;
+                color: #000 !important;
+                padding: 0 !important;
+                font-weight: 600;
+            }
+
+            #printSummary {
+                display: block !important;
+            }
+        }
+
+        #printSummary {
+            display: none;
+        }
+
         .footer-section {
             max-width: 1200px;
             margin: 0 auto;
@@ -547,7 +673,7 @@
 </div>
 
 <!-- ========== ORGANIZATION TYPE SELECTION ========== -->
-<div class="org-type-section">
+<div class="org-type-section no-print">
     <div class="section-header">
         <h2 class="section-title">Select Your Organization Type</h2>
         <p class="section-description">Choose the type of organization you represent to receive targeted AI risk assessment questions.</p>
@@ -593,7 +719,10 @@
 
 <!-- ========== QUESTIONS SECTION ========== -->
 <div class="questions-section" id="questionsSection" style="display: none;">
+    <div class="save-indicator" id="saveIndicator">💾 Progress saved automatically</div>
     <div class="success-message" id="successMessage">✓ Your responses have been saved successfully.</div>
+    <div class="completion-banner" id="completionBanner">✓ Assessment complete! Your responses were saved automatically. Click <strong>Print Report</strong> below to print or save as PDF.</div>
+    <div id="printSummary"></div>
 
     <!-- HEALTHCARE QUESTIONS -->
     <div class="question-block healthcare show" id="q1">
@@ -1573,18 +1702,19 @@
     </div>
 
     <!-- SUBMIT SECTION -->
-    <div class="question-block" id="submitSection">
+    <div class="question-block no-print" id="submitSection">
         <h3 class="question-text" style="margin-bottom: 20px;">Submit Your Assessment</h3>
-        <p class="question-context" style="margin-bottom: 20px;">Thank you for completing the National AI Risk Intelligence Framework assessment. Click below to submit your responses.</p>
+        <p class="auto-save-note">Your answers are saved automatically as you complete each question. When all required questions are answered, your assessment is finalized and you can print it.</p>
         <div class="button-group">
-            <button class="btn-primary" onclick="submitResponses()">Submit Assessment</button>
+            <button class="btn-primary" onclick="submitResponses()">Save Assessment</button>
+            <button class="btn-secondary" id="printBtn" style="display: none;" onclick="printReport()">Print Report</button>
             <button class="btn-secondary" onclick="resetForm()">Clear Responses</button>
         </div>
     </div>
 </div>
 
 <!-- ========== FOOTER ========== -->
-<div class="footer-section">
+<div class="footer-section no-print">
     <p class="footer-text">
         National AI Risk Intelligence Framework © 2024 | Your responses help us understand organizational AI threat landscapes across critical sectors.
     </p>
@@ -1592,36 +1722,172 @@
 
 <script>
     let selectedOrgType = null;
+    let saveTimeout = null;
+    let assessmentComplete = false;
+    const STORAGE_KEY = 'aiRiskAssessment';
 
     function selectOrgType(orgType) {
         selectedOrgType = orgType;
+        assessmentComplete = false;
         
-        // Update card selection
         document.querySelectorAll('.org-card').forEach(card => {
             card.classList.remove('selected');
         });
         document.querySelector(`[data-org="${orgType}"]`).classList.add('selected');
 
-        // Show questions section
         document.getElementById('questionsSection').style.display = 'block';
         
-        // Hide all questions
         document.querySelectorAll('.question-block').forEach(block => {
             block.classList.remove('show');
         });
 
-        // Show questions for selected org type
         document.querySelectorAll(`.question-block.${orgType}`).forEach(block => {
             block.classList.add('show');
         });
 
-        // Show submit section
         document.getElementById('submitSection').style.display = 'block';
 
-        // Scroll to questions
         setTimeout(() => {
             document.getElementById('questionsSection').scrollIntoView({ behavior: 'smooth' });
         }, 300);
+
+        checkCompletion();
+    }
+
+    function collectResponses() {
+        const responses = {
+            orgType: selectedOrgType,
+            timestamp: new Date().toISOString(),
+            preparedBy: 'Audrey Rah',
+            organization: 'University of Houston',
+            answers: {}
+        };
+
+        if (!selectedOrgType) return responses;
+
+        document.querySelectorAll(`.question-block.${selectedOrgType} [data-field]`).forEach(field => {
+            const key = field.dataset.field;
+            if (field.type === 'checkbox') {
+                if (field.checked) {
+                    if (!responses.answers[key]) responses.answers[key] = [];
+                    responses.answers[key].push(field.value);
+                }
+            } else if (field.type === 'radio') {
+                if (field.checked) {
+                    responses.answers[key] = field.value;
+                }
+            } else if (field.value.trim()) {
+                responses.answers[key] = field.value.trim();
+            }
+        });
+
+        return responses;
+    }
+
+    function saveProgress(showIndicator = true) {
+        if (!selectedOrgType) return;
+
+        const responses = collectResponses();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(responses));
+
+        if (showIndicator) {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.classList.add('show');
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+    }
+
+    function getRequiredRadioGroups() {
+        const groups = new Set();
+        document.querySelectorAll(`.question-block.${selectedOrgType} input[type="radio"]`).forEach(radio => {
+            groups.add(radio.name);
+        });
+        return groups;
+    }
+
+    function isAssessmentComplete() {
+        if (!selectedOrgType) return false;
+
+        const radioGroups = getRequiredRadioGroups();
+        for (const groupName of radioGroups) {
+            const checked = document.querySelector(`input[name="${groupName}"]:checked`);
+            if (!checked) return false;
+        }
+        return radioGroups.size > 0;
+    }
+
+    function buildPrintSummary(responses) {
+        const orgLabels = {
+            healthcare: 'Hospitals / Healthcare',
+            financial: 'Banks / Financial Institutions',
+            government: 'Government Organizations',
+            education: 'Education / Universities',
+            research: 'Research Organizations',
+            private: 'Private Companies',
+            other: 'Other'
+        };
+
+        let html = '<div style="margin-bottom:20px;"><strong>Organization Type:</strong> ' + (orgLabels[responses.orgType] || responses.orgType) + '<br>';
+        html += '<strong>Saved:</strong> ' + new Date(responses.timestamp).toLocaleString() + '</div>';
+
+        document.querySelectorAll(`.question-block.${selectedOrgType}.show`).forEach(block => {
+            const title = block.querySelector('.question-text');
+            if (!title) return;
+
+            html += '<div style="margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #ddd;">';
+            html += '<div style="font-weight:700;margin-bottom:8px;">' + title.textContent + '</div>';
+
+            const textFields = block.querySelectorAll('input[type="text"], input[type="number"], textarea');
+            textFields.forEach(field => {
+                if (field.value.trim()) {
+                    const label = field.closest('.input-field')?.querySelector('.input-label');
+                    html += '<div><strong>' + (label ? label.textContent : 'Answer') + ':</strong> ' + field.value.trim() + '</div>';
+                }
+            });
+
+            const checkedRadios = block.querySelectorAll('input[type="radio"]:checked');
+            checkedRadios.forEach(radio => {
+                html += '<div><strong>Answer:</strong> ' + radio.value + '</div>';
+            });
+
+            const checkedBoxes = block.querySelectorAll('input[type="checkbox"]:checked');
+            if (checkedBoxes.length) {
+                const values = Array.from(checkedBoxes).map(cb => cb.value).join(', ');
+                html += '<div><strong>Selected:</strong> ' + values + '</div>';
+            }
+
+            html += '</div>';
+        });
+
+        document.getElementById('printSummary').innerHTML = html;
+    }
+
+    function showCompletionUI(responses) {
+        assessmentComplete = true;
+        buildPrintSummary(responses);
+
+        document.getElementById('completionBanner').classList.add('show');
+        document.getElementById('successMessage').classList.add('show');
+        document.getElementById('printBtn').style.display = 'inline-block';
+    }
+
+    function checkCompletion() {
+        if (!selectedOrgType) return;
+
+        saveProgress(true);
+
+        if (isAssessmentComplete()) {
+            const responses = collectResponses();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(responses));
+            showCompletionUI(responses);
+        } else {
+            assessmentComplete = false;
+            document.getElementById('completionBanner').classList.remove('show');
+            document.getElementById('printBtn').style.display = 'none';
+        }
     }
 
     function submitResponses() {
@@ -1630,42 +1896,56 @@
             return;
         }
 
-        const responses = {
-            orgType: selectedOrgType,
-            timestamp: new Date().toISOString(),
-            answers: {}
-        };
+        const responses = collectResponses();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(responses));
+        buildPrintSummary(responses);
 
-        // Collect all form data
-        document.querySelectorAll('[data-field]').forEach(field => {
-            if (field.type === 'checkbox' || field.type === 'radio') {
-                if (field.checked) {
-                    if (!responses.answers[field.dataset.field]) {
-                        responses.answers[field.dataset.field] = [];
+        document.getElementById('successMessage').textContent = '✓ Your responses have been saved successfully.';
+        document.getElementById('successMessage').classList.add('show');
+
+        if (isAssessmentComplete()) {
+            showCompletionUI(responses);
+        } else {
+            alert('Please answer all required questions before printing. Radio-button questions must all be completed.');
+        }
+
+        console.log('Assessment Saved:', responses);
+    }
+
+    function printReport() {
+        if (!isAssessmentComplete()) {
+            alert('Please complete all required questions before printing.');
+            return;
+        }
+
+        const responses = collectResponses();
+        buildPrintSummary(responses);
+        window.print();
+    }
+
+    function restoreResponses(data) {
+        if (!data || !data.orgType) return;
+
+        selectOrgType(data.orgType);
+
+        Object.entries(data.answers || {}).forEach(([key, value]) => {
+            const fields = document.querySelectorAll(`[data-field="${key}"]`);
+            fields.forEach(field => {
+                if (field.type === 'checkbox' || field.type === 'radio') {
+                    if (Array.isArray(value)) {
+                        field.checked = value.includes(field.value);
+                    } else {
+                        field.checked = field.value === value;
                     }
-                    responses.answers[field.dataset.field].push(field.value);
+                } else {
+                    field.value = value;
                 }
-            } else {
-                if (field.value.trim()) {
-                    responses.answers[field.dataset.field] = field.value;
-                }
-            }
+            });
         });
 
-        // Save to localStorage
-        localStorage.setItem('aiRiskAssessment', JSON.stringify(responses));
-
-        // Show success message
-        const message = document.getElementById('successMessage');
-        message.classList.add('show');
-
-        // Log responses (in production, send to server)
-        console.log('Assessment Submitted:', responses);
-
-        // Hide after 3 seconds
-        setTimeout(() => {
-            message.classList.remove('show');
-        }, 3000);
+        if (isAssessmentComplete()) {
+            showCompletionUI(data);
+        }
     }
 
     function resetForm() {
@@ -1676,12 +1956,38 @@
             document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(field => {
                 field.checked = false;
             });
+            localStorage.removeItem(STORAGE_KEY);
+            assessmentComplete = false;
+            document.getElementById('completionBanner').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+            document.getElementById('printBtn').style.display = 'none';
+            document.getElementById('printSummary').innerHTML = '';
         }
     }
 
-    // Initialize
+    function attachAutoSaveListeners() {
+        document.querySelectorAll('[data-field]').forEach(field => {
+            field.addEventListener('change', checkCompletion);
+            field.addEventListener('input', () => {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => saveProgress(true), 400);
+            });
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-        selectOrgType('education');
+        attachAutoSaveListeners();
+
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                restoreResponses(JSON.parse(saved));
+            } catch (e) {
+                selectOrgType('education');
+            }
+        } else {
+            selectOrgType('education');
+        }
     });
 </script>
 
